@@ -8,6 +8,14 @@ var app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+app.options('/*/*/*', function(req, res){
+  console.log("writing headers only");
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.end('');
+});
+
 /**
  * @api {post} /connect/:carname connect
  * @apiName connect
@@ -379,7 +387,7 @@ app.get('/batteryLevel/:carname', function (req, res) {
 //////////////////////////////////////////////////////////
 // Do a U-Turn
 //////////////////////////////////////////////////////////
-app.get('/uturn/:carname', function (req, res) {
+app.post('/uturn/:carname', function (req, res) {
   ankiNodeUtils.uTurn(req.params.carname);
   res.send(JSON.stringify({ result: "Success"}));
   res.end();
@@ -690,7 +698,7 @@ app.get('/getTrackMap/:size', function (req, res) {
 //    res.send('<img src="' + canvas.toDataURL() + '" />');
     var stream = canvas.createPNGStream();
     res.type("png");
-    stream.pipe(res);   
+    stream.pipe(res);
 });
 
 app.get('/exit', function (req, res) {

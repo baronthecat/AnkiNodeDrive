@@ -35,7 +35,7 @@ noble.on('discover', function(peripheral) {
   var id = peripheral.advertisement.serviceUuids;
   var manufacturerData = peripheral.advertisement.manufacturerData;
   //console.log(util.inspect(peripheral, false,null));
-  
+
   // From SDK, get model_id (Byte 3)
   //typedef struct anki_vehicle_adv_mfg {
   //  uint32_t    identifier;
@@ -43,7 +43,7 @@ noble.on('discover', function(peripheral) {
   //  uint8_t     _reserved;
   //  uint16_t    product_id;
   //} anki_vehicle_adv_mfg_t
-  
+
   console.log("manufacturerData",manufacturerData);
   if(manufacturerData != null) {
       var model_data = manufacturerData[3]
@@ -92,7 +92,7 @@ noble.on('discover', function(peripheral) {
       if(carName != "Unknown") {
         var address = peripheral.address;
         var state = peripheral.state;
-        console.log('Found car: ' + carName + " ID: ["+id+"] Address: ["+address+"]"); 
+        console.log('Found car: ' + carName + " ID: ["+id+"] Address: ["+address+"]");
         carList.push({carName: carName, address: address, state: state, serviceUuids: id[0]});
         peripheralList.push(peripheral);
       }
@@ -417,7 +417,7 @@ var setEngineLight = function(carName,red,green,blue) {
   lightsPatternMessage.writeUInt8(0x00,12);
   lightsPatternMessage.writeUInt8(0x02,13); // 2=Solid. Anything else acts like Pulse
   lightsPatternMessage.writeUInt8(0x00,14);
-  lightsPatternMessage.writeUInt8(blue,15); // Blue start? 
+  lightsPatternMessage.writeUInt8(blue,15); // Blue start?
   lightsPatternMessage.writeUInt8(blue,16); // Blue End?
   lightsPatternMessage.writeUInt8(0x00,17);
 
@@ -438,9 +438,11 @@ var setEngineLight = function(carName,red,green,blue) {
 // Make car do a U-Turn
 //////////////////////////////////////////////////////////
 var uTurn = function(carName) {
-  var uTurnMessage = new Buffer(2);
-  uTurnMessage.writeUInt8(0x02, 0);
+  var uTurnMessage = new Buffer(4);
+  uTurnMessage.writeUInt8(0x04, 0);
   uTurnMessage.writeUInt8(0x32, 1); // ANKI_VEHICLE_MSG_C2V_TURN_180
+  uTurnMessage.writeUInt8(0x01, 2); // ANKI_VEHICLE_MSG_C2V_TURN_180
+  uTurnMessage.writeUInt8(0x00, 3); // ANKI_VEHICLE_MSG_C2V_TURN_180
 
   getWriterCharacteristic(carName).then(function(writerCharacteristic) {
     if(writerCharacteristic != null) {
